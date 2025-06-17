@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import * as cookieParser from 'cookie-parser';
@@ -14,6 +14,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
   app.enableCors(corsConfig(configService));
+  app.useGlobalPipes(new ValidationPipe());
 
   const appPrefix = configService.get<string>('APP_PREFIX', 'api/v1');
   app.setGlobalPrefix(appPrefix);

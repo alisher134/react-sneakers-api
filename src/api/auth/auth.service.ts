@@ -1,13 +1,20 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { verify } from 'argon2';
+
+import type { User } from '@/prisma/generated';
 
 import { UserService } from '../user/user.service';
 
+import { AuthTokenService } from './auth-token.service';
+import type { AuthTokenPayload } from './auth.types';
 import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authTokenService: AuthTokenService,
+  ) {}
 
   async register(dto: AuthDto) {
     const isExists = await this.userService.getByEmail(dto.email);
@@ -15,13 +22,15 @@ export class AuthService {
 
     const user = await this.userService.create(dto);
 
-    return user;
+    const payload: AuthTokenPayload = { id: user.id };
+    return this.authTokenService.generateTokens(payload);
   }
 
   async login(dto: AuthDto) {
-    const user = await this.validateUser(dto);
+    const user: User = await this.validateUser(dto);
 
-    return user;
+    const payload: AuthTokenPayload = { id: user.id };
+    return this.authTokenService.generateTokens(payload);
   }
 
   private async validateUser(dto: AuthDto) {
@@ -34,5 +43,13 @@ export class AuthService {
     return user;
   }
 
-  async refresh() {}
+  async refresh(refreshToken: string) {
+    const result = await this.authTokenService.verifyToken<AuthTokenPayload>(refreshToken);
+    if (!result) throw new UnauthorizedException('Invalid refresh token!');
+
+    const user = await this.userService.getById(result.id);
+
+    const payload: AuthTokenPayload = { id: user.id };
+    return this.authTokenService.generateAccessToken(payload);
+  }
 }
