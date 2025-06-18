@@ -7,7 +7,7 @@ import { UserService } from '../user/user.service';
 
 import { AuthTokenService } from './auth-token.service';
 import type { AuthTokenPayload } from './auth.types';
-import { LoginDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 @Injectable()

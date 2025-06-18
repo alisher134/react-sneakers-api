@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { CookieOptions, Response } from 'express';
 
 import { IS_DEV_ENV } from '@/common/utils/is-dev';
 
 @Injectable()
 export class AuthCookieService {
+  constructor(private readonly configService: ConfigService) {}
+
   setRefreshToken(res: Response, refreshToken: string) {
     const expiresIn = new Date();
     expiresIn.setDate(expiresIn.getDate() + 7);
@@ -21,9 +24,9 @@ export class AuthCookieService {
   private cookieOptions(expires: Date): CookieOptions {
     return {
       httpOnly: true,
-      domain: '',
+      domain: this.configService.get<string>('DOMAIN', 'localhost'),
       sameSite: IS_DEV_ENV ? 'none' : 'lax',
-      secure: !IS_DEV_ENV,
+      secure: true,
       expires,
     };
   }
