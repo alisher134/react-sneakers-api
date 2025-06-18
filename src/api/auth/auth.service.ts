@@ -7,7 +7,8 @@ import { UserService } from '../user/user.service';
 
 import { AuthTokenService } from './auth-token.service';
 import type { AuthTokenPayload } from './auth.types';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/auth.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
     private readonly authTokenService: AuthTokenService,
   ) {}
 
-  async register(dto: AuthDto) {
+  async register(dto: RegisterDto) {
     const isExists = await this.userService.getByEmail(dto.email);
     if (isExists) throw new BadGatewayException('Email is busy!');
 
@@ -26,14 +27,14 @@ export class AuthService {
     return this.authTokenService.generateTokens(payload);
   }
 
-  async login(dto: AuthDto) {
+  async login(dto: LoginDto) {
     const user: User = await this.validateUser(dto);
 
     const payload: AuthTokenPayload = { id: user.id };
     return this.authTokenService.generateTokens(payload);
   }
 
-  private async validateUser(dto: AuthDto) {
+  private async validateUser(dto: LoginDto) {
     const user = await this.userService.getByEmail(dto.email);
     if (!user) throw new BadGatewayException('Invalid email or password');
 

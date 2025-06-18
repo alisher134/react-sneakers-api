@@ -29,6 +29,8 @@ export class UserService {
   async create(dto: CreateUserDto) {
     const data: Prisma.UserCreateInput = {
       email: dto.email,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
       password: await hash(dto.password),
     };
 

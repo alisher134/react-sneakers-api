@@ -138,7 +138,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\slosh\\OneDrive\\Рабочий стол\\react-sneakers-api\\prisma\\generated",
+      "value": "C:\\Users\\lab57\\Desktop\\react-sneakers-api\\prisma\\generated",
       "fromEnvVar": null
     },
     "config": {
@@ -152,7 +152,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\slosh\\OneDrive\\Рабочий стол\\react-sneakers-api\\prisma\\schema\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\lab57\\Desktop\\react-sneakers-api\\prisma\\schema\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

@@ -12,7 +12,8 @@ import type { Request, Response } from 'express';
 
 import { AuthCookieService } from './auth-cookie.service';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/auth.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async register(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+  async register(@Res({ passthrough: true }) res: Response, @Body() dto: RegisterDto) {
     const { accessToken, refreshToken } = await this.authService.register(dto);
 
     this.authCookieService.setRefreshToken(res, refreshToken);
@@ -33,7 +34,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+  async login(@Res({ passthrough: true }) res: Response, @Body() dto: LoginDto) {
     const { accessToken, refreshToken } = await this.authService.login(dto);
 
     this.authCookieService.setRefreshToken(res, refreshToken);
