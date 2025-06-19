@@ -12,13 +12,17 @@ export class AuthCookieService {
     const expiresIn = new Date();
     expiresIn.setDate(expiresIn.getDate() + 7);
 
-    res.cookie('refreshToken', refreshToken, this.cookieOptions(expiresIn));
+    this.saveCookie(res, refreshToken, expiresIn);
   }
 
   removeRefreshToken(res: Response) {
     const expiresIn = new Date(0);
 
-    res.cookie('refreshToken', '', this.cookieOptions(expiresIn));
+    this.saveCookie(res, '', expiresIn);
+  }
+
+  private saveCookie(res: Response, refreshToken: string, expiresIn: Date) {
+    res.cookie('refreshToken', refreshToken, this.cookieOptions(expiresIn));
   }
 
   private cookieOptions(expires: Date): CookieOptions {
