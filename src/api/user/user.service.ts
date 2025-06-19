@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { hash } from 'argon2';
 
 import { PrismaService } from '@/infra/prisma/prisma.service';
 import type { Prisma } from '@/prisma/generated';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -24,6 +25,28 @@ export class UserService {
     if (!user) throw new NotFoundException('User not found!');
 
     return user;
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    await this.getById(id);
+
+    const data: Partial<Prisma.UserUpdateInput> = {};
+
+    if (dto.email) {
+      const isExists = await this.getByEmail(dto.email);
+      if (isExists) throw new BadRequestException('Email is busy!');
+
+      data.email = dto.email;
+    }
+
+    if (dto.firstName) data.firstName = dto.firstName;
+    if (dto.lastName) data.lastName = dto.lastName;
+    if (dto.password) data.password = await hash(dto.password);
+
+    return this.prismaService.user.update({
+      where: { id },
+      data,
+    });
   }
 
   async create(dto: CreateUserDto) {
